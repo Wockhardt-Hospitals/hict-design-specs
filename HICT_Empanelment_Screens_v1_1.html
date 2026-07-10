@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HICT — Empanelment Module Screens (v1, All Roles)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: #f1f5f9; color: #0f172a; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+  a { color: inherit; text-decoration: none; }
+  table { border-collapse: collapse; width: 100%; }
+  input, select, textarea { font-family: inherit; font-size: 14px; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ===== Layout shell ===== */
+  .app-shell { display: flex; min-height: 100vh; }
+  .sidebar { width: 248px; background: #0f172a; color: #e2e8f0; flex-shrink: 0; padding: 20px 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .brand { padding: 0 20px 20px; border-bottom: 1px solid #1e293b; }
+  .brand-name { font-weight: 700; font-size: 18px; color: #fff; letter-spacing: -0.3px; }
+  .brand-sub { font-size: 11px; color: #64748b; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.6px; }
+  .role-badge { margin: 16px 16px 8px; padding: 10px 12px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 10px; border: 1px solid #475569; }
+  .role-badge .role-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px; }
+  .role-badge .role-name { font-size: 13px; font-weight: 600; color: #f1f5f9; margin-top: 2px; }
+  .role-badge .role-unit { font-size: 11px; color: #38bdf8; margin-top: 4px; font-weight: 500; }
+  .role-switcher { margin: 8px 16px 4px; }
+  .role-switcher label { display: block; font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+  .role-switcher select { width: 100%; background: #1e293b; color: #f1f5f9; border: 1px solid #475569; border-radius: 8px; padding: 7px 9px; font-size: 12px; }
+  .nav-group-title { padding: 16px 20px 6px; font-size: 10px; color: #475569; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: #cbd5e1; font-size: 13px; cursor: pointer; border-left: 3px solid transparent; transition: background 0.15s, color 0.15s; }
+  .nav-item:hover { background: #1e293b; color: #f8fafc; }
+  .nav-item.active { background: #1e293b; color: #fff; border-left-color: #38bdf8; font-weight: 500; }
+  .nav-item .nav-count { margin-left: auto; background: #334155; color: #cbd5e1; padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .nav-item.active .nav-count { background: #0284c7; color: #fff; }
+  .nav-item .nav-count.hot { background: #dc2626; color: #fff; }
+
+  .main { flex: 1; min-width: 0; }
+  .topbar { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+  .breadcrumb { font-size: 13px; color: #64748b; }
+  .breadcrumb strong { color: #0f172a; font-weight: 600; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .icon-btn { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; background: #f1f5f9; color: #475569; font-size: 14px; }
+  .user-pill { display: flex; align-items: center; gap: 10px; padding: 4px 10px 4px 4px; border-radius: 999px; background: #f1f5f9; }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#7c3aed,#0ea5e9); color: #fff; display: grid; place-items: center; font-weight: 600; font-size: 12px; }
+  .user-meta { font-size: 12px; line-height: 1.2; }
+  .user-meta .u-name { font-weight: 600; color: #0f172a; }
+  .user-meta .u-role { color: #64748b; font-size: 11px; }
+
+  .page { padding: 22px 28px 60px; max-width: 1480px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .screen-header { margin-bottom: 18px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+  .screen-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; color: #0f172a; }
+  .screen-sub { font-size: 13px; color: #64748b; margin-top: 4px; }
+  .screen-tag { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; margin-left: 8px; vertical-align: 4px; }
+  .screen-tag.new { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .screen-tag.reuse { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+
+  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
+  .card + .card { margin-top: 16px; }
+  .card-body { padding: 16px 18px; }
+  .card-head { padding: 14px 18px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+  .card-head h3 { font-size: 14px; font-weight: 600; color: #0f172a; }
+  .card-head .card-sub { font-size: 12px; color: #64748b; margin-top: 1px; }
+
+  /* ===== Buttons ===== */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; transition: all 0.15s; border: 1px solid transparent; }
+  .btn-primary { background: #0284c7; color: #fff; }
+  .btn-primary:hover { background: #0369a1; }
+  .btn-secondary { background: #fff; color: #334155; border-color: #cbd5e1; }
+  .btn-secondary:hover { background: #f8fafc; border-color: #94a3b8; }
+  .btn-success { background: #059669; color: #fff; }
+  .btn-success:hover { background: #047857; }
+  .btn-danger { background: #fff; color: #b91c1c; border-color: #fecaca; }
+  .btn-danger:hover { background: #fef2f2; }
+  .btn-warn { background: #f59e0b; color: #fff; }
+  .btn-warn:hover { background: #d97706; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+  /* ===== KPI cards ===== */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+  .kpi { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 18px; position: relative; overflow: hidden; }
+  .kpi::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+  .kpi.k-pipeline::before { background: #6366f1; }
+  .kpi.k-action::before { background: #dc2626; }
+  .kpi.k-active::before { background: #059669; }
+  .kpi.k-renewal::before { background: #f59e0b; }
+  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: #64748b; font-weight: 600; }
+  .kpi-value { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 600; color: #0f172a; margin-top: 8px; }
+  .kpi-meta { font-size: 11px; color: #64748b; margin-top: 6px; }
+
+  /* ===== Filter bar ===== */
+  .filter-bar { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .filter-bar label { font-size: 11px; font-weight: 600; color: #475569; text-transform: uppercase; letter-spacing: 0.4px; margin-right: 4px; }
+  .filter-bar select, .filter-bar input { padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #fff; color: #0f172a; }
+  .filter-bar input[type="search"] { min-width: 240px; padding-left: 30px; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'><circle cx='11' cy='11' r='8'/><path d='M21 21l-4.3-4.3'/></svg>"); background-repeat: no-repeat; background-position: 9px center; }
+  .filter-bar .filter-spacer { flex: 1; }
+
+  /* ===== Category tabs (mirrors Payors Master pattern) ===== */
+  .cat-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .cat-tab { padding: 6px 14px; border-radius: 999px; border: 1px solid #cbd5e1; background: #fff; font-size: 12px; font-weight: 500; color: #334155; cursor: pointer; }
+  .cat-tab.active { background: #0284c7; color: #fff; border-color: #0284c7; }
+  .cat-tab .ct-n { margin-left: 5px; font-family: 'JetBrains Mono', monospace; font-size: 10px; opacity: 0.8; }
+
+  /* ===== View tabs (Action Required / Watching) ===== */
+  .view-tabs { display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 16px; }
+  .view-tab { padding: 10px 18px; font-size: 13px; font-weight: 600; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+  .view-tab.active { color: #0284c7; border-bottom-color: #0284c7; }
+  .view-tab .vt-count { margin-left: 6px; background: #f1f5f9; color: #475569; padding: 1px 8px; border-radius: 999px; font-size: 11px; }
+  .view-tab.active .vt-count { background: #e0f2fe; color: #0369a1; }
+  .view-tab .vt-count.hot { background: #fee2e2; color: #b91c1c; }
+
+  /* ===== Tables ===== */
+  table.queue { width: 100%; font-size: 13px; }
+  table.queue thead th { text-align: left; padding: 10px 12px; background: #f8fafc; color: #475569; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+  table.queue tbody td { padding: 11px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  table.queue tbody tr:hover { background: #f8fafc; }
+  .emp-link { color: #0284c7; text-decoration: underline; font-family: 'JetBrains Mono', monospace; font-weight: 600; cursor: pointer; font-size: 12px; }
+  .emp-link:hover { color: #0369a1; }
+  .num { text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 500; white-space: nowrap; }
+  .payor-cell .pname { font-weight: 600; font-size: 13px; color: #0f172a; }
+  .payor-cell .pcat { font-size: 11px; color: #64748b; margin-top: 1px; }
+  .type-chip { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-right: 3px; }
+  .type-ip { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+  .type-op { background: #ede9fe; color: #6d28d9; border: 1px solid #c4b5fd; }
+  .type-hcu { background: #ccfbf1; color: #115e59; border: 1px solid #5eead4; }
+  .unit-chips { font-size: 11px; color: #475569; font-family: 'JetBrains Mono', monospace; }
+
+  /* ===== Status badges (empanelment stages) ===== */
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; border: 1px solid transparent; }
+  .badge-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .b-s1 { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+  .b-s1 .badge-dot { background: #3b82f6; }
+  .b-s2 { background: #e0e7ff; color: #3730a3; border-color: #a5b4fc; }
+  .b-s2 .badge-dot { background: #6366f1; }
+  .b-s3 { background: #fae8ff; color: #86198f; border-color: #f0abfc; }
+  .b-s3 .badge-dot { background: #d946ef; }
+  .b-s4 { background: #ede9fe; color: #6d28d9; border-color: #c4b5fd; }
+  .b-s4 .badge-dot { background: #8b5cf6; }
+  .b-s5 { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+  .b-s5 .badge-dot { background: #f59e0b; }
+  .b-s6 { background: #ccfbf1; color: #115e59; border-color: #5eead4; }
+  .b-s6 .badge-dot { background: #14b8a6; }
+  .b-active { background: #dcfce7; color: #166534; border-color: #86efac; }
+  .b-active .badge-dot { background: #22c55e; }
+  .b-returned { background: #ffedd5; color: #9a3412; border-color: #fdba74; }
+  .b-returned .badge-dot { background: #f97316; }
+  .b-rejected { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+  .b-rejected .badge-dot { background: #ef4444; }
+  .b-renewal { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+  .b-renewal .badge-dot { background: #f59e0b; }
+  .b-expired { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+  .b-expired .badge-dot { background: #64748b; }
+  .aging-ok { color: #059669; font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .aging-warn { color: #d97706; font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .aging-breach { color: #dc2626; font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  /* ===== Forms ===== */
+  .form-section { margin-bottom: 22px; }
+  .form-section-title { font-size: 13px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .form-section-title .step-num { width: 22px; height: 22px; border-radius: 50%; background: #0284c7; color: #fff; display: grid; place-items: center; font-size: 11px; font-family: 'JetBrains Mono', monospace; }
+  .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .form-grid .span2 { grid-column: span 2; }
+  .form-grid .span3 { grid-column: span 3; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 5px; }
+  .field label .req { color: #dc2626; }
+  .field input, .field select, .field textarea { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; background: #fff; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid #bae6fd; border-color: #0284c7; }
+  .field .hint { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .field input[readonly] { background: #f8fafc; color: #64748b; }
+  .check-row { display: flex; gap: 18px; flex-wrap: wrap; }
+  .check-pill { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; background: #fff; }
+  .check-pill input { accent-color: #0284c7; width: 15px; height: 15px; }
+  .check-pill.checked { border-color: #0284c7; background: #f0f9ff; color: #0369a1; }
+
+  /* ===== Business value sub-table ===== */
+  table.bv-table { font-size: 13px; margin-top: 6px; }
+  table.bv-table th { text-align: left; padding: 8px 12px; background: #f8fafc; color: #475569; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #e2e8f0; }
+  table.bv-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; }
+  table.bv-table input { width: 130px; padding: 6px 9px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 13px; text-align: right; }
+  table.bv-table tfoot td { font-weight: 700; background: #f8fafc; }
+
+  /* ===== Stage timeline (stepper) ===== */
+  .stepper { display: flex; align-items: flex-start; margin: 6px 0 4px; overflow-x: auto; padding-bottom: 6px; }
+  .step { flex: 1; min-width: 108px; text-align: center; position: relative; }
+  .step::before { content: ''; position: absolute; top: 13px; left: -50%; width: 100%; height: 3px; background: #e2e8f0; z-index: 0; }
+  .step:first-child::before { display: none; }
+  .step.done::before { background: #059669; }
+  .step.current::before { background: #059669; }
+  .step-dot { width: 27px; height: 27px; border-radius: 50%; background: #fff; border: 2.5px solid #cbd5e1; display: grid; place-items: center; margin: 0 auto; font-size: 12px; font-weight: 700; color: #94a3b8; position: relative; z-index: 1; font-family: 'JetBrains Mono', monospace; }
+  .step.done .step-dot { background: #059669; border-color: #059669; color: #fff; }
+  .step.current .step-dot { background: #fff; border-color: #0284c7; color: #0284c7; box-shadow: 0 0 0 4px #e0f2fe; }
+  .step-label { font-size: 10.5px; font-weight: 600; color: #64748b; margin-top: 7px; line-height: 1.3; padding: 0 4px; }
+  .step.current .step-label { color: #0284c7; }
+  .step.done .step-label { color: #059669; }
+  .step-meta { font-size: 9.5px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+
+  /* ===== Activity log ===== */
+  .activity { position: relative; padding-left: 26px; }
+  .activity::before { content: ''; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 2px; background: #e2e8f0; }
+  .act-item { position: relative; padding: 0 0 16px; }
+  .act-item::before { content: ''; position: absolute; left: -23px; top: 5px; width: 11px; height: 11px; border-radius: 50%; background: #fff; border: 2.5px solid #94a3b8; }
+  .act-item.a-approve::before { border-color: #059669; background: #dcfce7; }
+  .act-item.a-return::before { border-color: #f97316; background: #ffedd5; }
+  .act-item.a-submit::before { border-color: #0284c7; background: #e0f2fe; }
+  .act-item.a-doc::before { border-color: #8b5cf6; background: #ede9fe; }
+  .act-head { font-size: 13px; font-weight: 600; color: #0f172a; }
+  .act-head .act-role { display: inline-block; margin-left: 6px; padding: 1px 7px; background: #f1f5f9; border-radius: 4px; font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.4px; }
+  .act-time { font-size: 11px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; margin-top: 1px; }
+  .act-remarks { margin-top: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 11px; font-size: 12.5px; color: #374151; }
+  .act-remarks.return-remarks { background: #fff7ed; border-color: #fdba74; }
+  .cycle-divider { display: flex; align-items: center; gap: 10px; margin: 4px 0 16px; }
+  .cycle-divider .cd-line { flex: 1; height: 1px; background: #e2e8f0; }
+  .cycle-divider .cd-label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.7px; background: #f1f5f9; padding: 2px 10px; border-radius: 999px; border: 1px solid #e2e8f0; }
+
+  /* ===== Detail summary ===== */
+  .detail-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; align-items: start; }
+  .kv-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 18px; }
+  .kv .k { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; font-weight: 600; }
+  .kv .v { font-size: 13px; font-weight: 600; color: #0f172a; margin-top: 1px; }
+  .kv .v.mono { font-family: 'JetBrains Mono', monospace; }
+  .terms-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 13px; font-size: 12.5px; color: #374151; margin-top: 6px; line-height: 1.6; }
+
+  /* ===== Action panels (role-conditional) ===== */
+  .action-panel { border: 1.5px solid #bae6fd; background: linear-gradient(180deg, #f0f9ff, #fff); border-radius: 12px; }
+  .action-panel .card-head { border-bottom-color: #bae6fd; }
+  .action-panel .card-head h3 { color: #0369a1; }
+  .decision-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .return-box { margin-top: 14px; border: 1px dashed #fdba74; background: #fff7ed; border-radius: 10px; padding: 13px 15px; }
+  .return-box .rb-title { font-size: 12px; font-weight: 700; color: #9a3412; margin-bottom: 8px; }
+  .undertaking { display: flex; gap: 10px; align-items: flex-start; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 12px 14px; margin: 10px 0; font-size: 13px; color: #78350f; }
+  .undertaking input { margin-top: 3px; accent-color: #b45309; width: 15px; height: 15px; flex-shrink: 0; }
+
+  /* ===== File upload ===== */
+  .upload-zone { border: 2px dashed #cbd5e1; border-radius: 10px; padding: 22px; text-align: center; color: #64748b; font-size: 13px; background: #f8fafc; }
+  .upload-zone .uz-icon { font-size: 22px; margin-bottom: 6px; }
+  .file-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid #e2e8f0; border-radius: 8px; margin-top: 8px; font-size: 13px; background: #fff; }
+  .file-row .f-icon { width: 32px; height: 32px; border-radius: 8px; background: #fee2e2; color: #b91c1c; display: grid; place-items: center; font-size: 11px; font-weight: 700; }
+  .file-row .f-meta { flex: 1; }
+  .file-row .f-name { font-weight: 600; color: #0f172a; }
+  .file-row .f-sub { font-size: 11px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; }
+
+  /* ===== Modal mock (submit warning) ===== */
+  .modal-mock { max-width: 520px; margin: 14px auto 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 20px 40px rgba(15,23,42,0.18); overflow: hidden; }
+  .modal-mock .mm-head { padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .modal-mock .mm-body { padding: 16px 18px; font-size: 13px; color: #374151; }
+  .modal-mock .mm-foot { padding: 12px 18px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px; background: #f8fafc; }
+  .modal-backdrop-label { text-align: center; font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px; margin-top: 18px; font-weight: 700; }
+
+  /* ===== Spec + dev-note annotation system ===== */
+  .spec-box { border: 1.5px dashed #94a3b8; background: #f8fafc; border-radius: 10px; padding: 14px 16px; margin: 14px 0; font-size: 13px; color: #334155; }
+  .spec-box h4 { font-size: 11.5px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .spec-box ul { padding-left: 18px; }
+  .spec-box li { margin: 3px 0; }
+  .dev-note { background: #fefce8; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0; padding: 16px 18px; margin: 14px 0; font-size: 13px; color: #374151; }
+  .dev-note h4 { font-size: 12px; font-weight: 700; color: #b45309; margin-bottom: 10px; letter-spacing: 0.3px; }
+  .dev-note h5 { font-size: 12px; font-weight: 700; color: #92400e; margin: 10px 0 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .dev-note ul { padding-left: 18px; }
+  .dev-note li { margin: 3px 0; }
+  .dev-note code { font-family: 'JetBrains Mono', monospace; background: #fff; padding: 1px 5px; border-radius: 3px; font-size: 12px; border: 1px solid #fde68a; color: #92400e; }
+  .dev-note .formula { background: #fff; border: 1px solid #fde68a; border-radius: 6px; padding: 10px 12px; margin: 8px 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; color: #78350f; white-space: pre-wrap; }
+  .dev-note table.reuse-map { width: 100%; margin-top: 8px; background: #fff; border: 1px solid #fde68a; border-radius: 6px; overflow: hidden; font-size: 12px; }
+  .dev-note table.reuse-map th { background: #fef3c7; color: #78350f; padding: 8px 10px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; font-weight: 700; border-bottom: 1px solid #fde68a; }
+  .dev-note table.reuse-map td { padding: 9px 10px; border-bottom: 1px solid #fef3c7; vertical-align: top; color: #374151; }
+  .dev-note table.reuse-map tr:last-child td { border-bottom: none; }
+  .dev-note .pill-new { background: #166534; color: #fff; padding: 1px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .dev-note .pill-reuse { background: #1e40af; color: #fff; padding: 1px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .dev-note .pill-decide { background: #b91c1c; color: #fff; padding: 1px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+
+  /* ===== Empanelment TAT grid (mirrors existing Admin TAT Configuration) ===== */
+  .tat-info { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; font-size: 13px; color: #1e40af; }
+  .tat-info h4 { font-size: 14px; font-weight: 700; color: #1d4ed8; margin-bottom: 6px; }
+  .tat-info .ti-note { margin-top: 8px; font-weight: 600; }
+  table.tat { width: 100%; font-size: 13px; border-radius: 12px; overflow: hidden; }
+  table.tat thead th { background: #0f172a; color: #e2e8f0; padding: 14px 10px; text-align: center; font-size: 12px; font-weight: 700; line-height: 1.35; vertical-align: top; }
+  table.tat thead th .th-sub { display: block; font-size: 10px; color: #94a3b8; font-weight: 500; margin-top: 3px; text-transform: lowercase; }
+  table.tat thead th.tat-corner { text-align: left; font-size: 12px; letter-spacing: 0.6px; }
+  table.tat thead th.tat-corner .th-sub { text-transform: none; }
+  table.tat tbody td { padding: 14px 10px; border-bottom: 1px solid #f1f5f9; text-align: center; background: #fff; }
+  table.tat tbody td.tat-cat { text-align: left; font-weight: 600; color: #0f172a; white-space: nowrap; padding-left: 16px; }
+  table.tat tbody td.tat-cat::before { content: '●'; color: #0284c7; font-size: 9px; margin-right: 8px; vertical-align: 2px; }
+  .tat-cell input { width: 62px; padding: 9px 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; border: 1.5px solid #86efac; background: #f0fdf4; color: #166534; border-radius: 10px; }
+  .tat-cell input.tc-warn { border-color: #fcd34d; background: #fffbeb; color: #b45309; }
+  .tat-cell input:focus { outline: 2px solid #bae6fd; border-color: #0284c7; }
+  .tat-cell .tc-days { display: block; font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+  /* Role-conditional visibility is controlled by JS (setRole) via inline display */
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-name">🏥 HICT</div>
+      <div class="brand-sub">Empanelment Module · v1 Mockup</div>
+    </div>
+
+    <div class="role-badge">
+      <div class="role-label">Logged in as</div>
+      <div class="role-name" id="rb-name">Rohit Deshmukh</div>
+      <div class="role-unit" id="rb-unit">Marketing Associate · SOBO</div>
+    </div>
+
+    <div class="role-switcher">
+      <label>🔀 Mockup control — view as role</label>
+      <select id="roleSelect" onchange="setRole(this.value)">
+        <option value="MARKETING">Marketing Associate (new role)</option>
+        <option value="MANAGEMENT">Management (Stage 1)</option>
+        <option value="FINANCE">Finance (Stage 2)</option>
+        <option value="GROUP">Group Management (Stage 3)</option>
+        <option value="BILLING">Billing (Stage 6)</option>
+      </select>
+    </div>
+
+    <div class="nav-group-title">Overview</div>
+    <div class="nav-item active" data-screen="dashboard">📊 Empanelment Dashboard</div>
+
+    <div class="nav-group-title">Workflow</div>
+    <div class="nav-item" data-screen="pipeline">🗂 Empanelment Pipeline<span class="nav-count hot">4</span></div>
+    <div class="nav-item" data-screen="initiate" data-role-only="MARKETING MANAGEMENT">➕ Initiate Empanelment</div>
+    <div class="nav-item" data-screen="detail">📄 Empanelment Detail (sample)</div>
+
+    <div class="nav-group-title">Registers</div>
+    <div class="nav-item" data-screen="active">✅ Active Empanelments<span class="nav-count">42</span></div>
+    <div class="nav-item" data-screen="renewal">⏳ Renewal Due · 45d<span class="nav-count hot">5</span></div>
+    <div class="nav-item" data-screen="expired">⛔ Expired<span class="nav-count">7</span></div>
+
+    <div class="nav-group-title">Analytics</div>
+    <div class="nav-item" data-screen="reports">📈 Reports</div>
+
+    <div class="nav-group-title">Admin</div>
+    <div class="nav-item" data-screen="tat">⏱ Empanelment TAT Config</div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="breadcrumb">HICT · <strong>Empanelment</strong></div>
+      <div class="topbar-right">
+        <button class="icon-btn" title="Notifications">🔔</button>
+        <div class="user-pill">
+          <div class="user-avatar" id="tb-avatar">RD</div>
+          <div class="user-meta">
+            <div class="u-name" id="tb-name">Rohit Deshmukh</div>
+            <div class="u-role" id="tb-role">Marketing Associate · SOBO</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ TOP-OF-FILE DEVELOPER NOTE ============ -->
+    <div class="page" style="padding-bottom: 0;">
+      <div class="dev-note" style="margin-top: 0;">
+        <h4>🔧 DEVELOPER NOTE — NOT PART OF UI · MODULE OVERVIEW (read this first)</h4>
+        <p>The <strong>Empanelment module</strong> tracks a payor agreement from initiation to activation, and then through its live life-cycle (Active → Renewal Due → Expired). It sits alongside the existing collection workflow and reuses HICT's existing role, unit, and payor-category infrastructure. Use the <strong>"view as role" selector in the sidebar</strong> — action panels and buttons in every screen change with the selected role. That selector is a mockup device only; in production the role comes from the JWT.</p>
+
+        <h5>New role: MARKETING_ASSOCIATE</h5>
+        <ul>
+          <li>New user role added to the existing role enum. Profile fields captured at user creation (Admin → User Management): <code>name_as_per_hmis</code>, <code>employee_id</code>, <code>phone</code>, <code>official_email</code>, <code>department_as_per_hmis</code>, <code>designation_as_per_hmis</code>, <code>unit</code>.</li>
+          <li>Marketing Associate sees <strong>only the Empanelment module</strong> — no access to bills, collections, or any existing screens.</li>
+        </ul>
+
+        <h5>Stage model & status enum</h5>
+        <div class="formula">EMP_STATUS:
+  STAGE_1_MGMT_REVIEW      "Management Review"            owner: MANAGEMENT (initiating unit)
+  STAGE_2_FIN_REVIEW       "Finance Review"               owner: FINANCE
+  STAGE_3_GROUP_REVIEW     "Group Management Review"      owner: GROUP_MANAGEMENT ⚠ see below
+  STAGE_4_LEGAL_DRAFTING   "Agreement Drafting — Legal"   owner: MARKETING_ASSOCIATE (updates status)
+  STAGE_5_WITH_PAYOR       "With Payor — Signature Pending" owner: MARKETING_ASSOCIATE
+  STAGE_6_ACTIVATION       "Activation Pending — Billing" owner: BILLING (empanelment's unit)
+  ACTIVE                   terminal-live
+  RETURNED_FOR_MODIFICATION owner: MARKETING_ASSOCIATE (resubmit → restarts at Stage 1)
+  REJECTED                 terminal (only from Stages 1-3)
+  EXPIRED                  derived (expiry_date &lt; today), set by nightly job
+  RENEWAL_DUE              ⚠ NOT a stored status — a derived view filter:
+                           status = ACTIVE AND expiry_date &lt;= today + 45 days</div>
+
+        <h5>✅ CONFIRMED — Group Management write exception</h5>
+        <ul>
+          <li>GROUP_MANAGEMENT stays <strong>view-only</strong> everywhere else in HICT. For this module only, a scoped permission <code>EMPANELMENT_APPROVER</code> is granted to designated Group Management users — this is the <strong>single action</strong> Group Management holds inside HICT. <code>@PreAuthorize</code> on the Stage-3 decision endpoint checks this permission, not the role. All other write endpoints continue to reject GROUP_MANAGEMENT unconditionally.</li>
+        </ul>
+
+        <h5>✅ CONFIRMED — Empanelment is unit-wise</h5>
+        <ul>
+          <li>Every empanelment belongs to exactly <strong>one unit</strong> (stamped from the initiator's profile), and the entire journey runs unit-wise: Stage 1 review by that unit's Management, Stage 6 activation undertaking by that unit's Billing team only.</li>
+          <li>The <strong>Marketing Associate role is unit-wise</strong> — each Marketing Associate belongs to one unit and sees only that unit's empanelments. Finance and Group Management see all units.</li>
+          <li>Same payor to be empanelled at another unit → a separate empanelment record with its own journey.</li>
+        </ul>
+
+        <h5>✅ CONFIRMED — Renewal</h5>
+        <ul>
+          <li><strong>Initiate Renewal</strong> is in scope for v1: it opens the Initiate form pre-filled from the expiring/expired empanelment, links the records via <code>renewal_of_id</code>, and the renewal runs the <strong>same full Stage 1–6 journey as a fresh empanelment</strong> — no shortcuts.</li>
+        </ul>
+
+        <h5>Suggested tables (indicative — Ujwala to finalise)</h5>
+        <div class="formula">empanelments            (id, emp_code, payor_category, payor_entity_id, payor_entity_name_free,
+                         types_json [IP/OP/HCU], unit, target_activation_date, renewal_of_id,
+                         tenure_months, key_commercial_terms, pct_over_gipsa_ip, pct_over_cash_ip,
+                         pct_over_cash_op, pct_over_cash_hcu, status, current_cycle, created_by, ...)
+empanelment_bv          (empanelment_id, type [IP/OP/HCU], patients_per_month, revenue_per_month)
+empanelment_activity    (id, empanelment_id, cycle_no, stage, action, actor_user_id, actor_role,
+                         remarks, terms_change_flag, created_at)   ← append-only audit log
+empanelment_documents   (id, empanelment_id, doc_type [SIGNED_AGREEMENT/OTHER], s3_key,
+                         uploaded_by, uploaded_at)
+empanelment_activation  (empanelment_id, tariff_updated_flag, his_activated_flag,
+                         undertaking_by, undertaking_at)           ← one row per empanelment</div>
+
+        <h5>Reuse map</h5>
+        <table class="reuse-map">
+          <thead><tr><th>Component</th><th>Status</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Payor category chips + entity dropdown</td><td><span class="pill-reuse">Reuse</span></td><td>Same Payors Master categories as Admin → Payors Master. Entity list = active payors of the selected category. New entities still route through Admin (Ms. Shaurya Patil approval) — do NOT allow free-text entity creation from this form.</td></tr>
+            <tr><td>Sidebar / topbar / table / badge components</td><td><span class="pill-reuse">Reuse</span></td><td>Identical to existing HICT shell.</td></tr>
+            <tr><td>S3 document upload (signed agreement)</td><td><span class="pill-reuse">Reuse</span></td><td>Same upload service used elsewhere in HICT; PDF only, ≤10 MB suggested.</td></tr>
+            <tr><td>Stage stepper, activity log w/ cycles, activation undertaking</td><td><span class="pill-new">New</span></td><td>Built new for this module — patterns shown in Empanelment Detail screen.</td></tr>
+            <tr><td>Marketing Associate role + module-scoped GM permission</td><td><span class="pill-new">New</span></td><td>See decision items above.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="page" style="padding-top: 0;">
+
+    <!-- ================================================================
+         SCREEN 1 — EMPANELMENT DASHBOARD
+    ================================================================= -->
+    <section class="screen active" id="screen-dashboard">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Empanelment Dashboard <span class="screen-tag new">NEW MODULE</span></div>
+          <div class="screen-sub">Pipeline health and portfolio status across payor categories · As on 10-Jul-2026</div>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-primary" data-role-only="MARKETING MANAGEMENT" onclick="showScreen('initiate')">➕ Initiate Empanelment</button>
+        </div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi k-pipeline">
+          <div class="kpi-label">In Pipeline</div>
+          <div class="kpi-value">11</div>
+          <div class="kpi-meta">Across Stages 1–6 · all units</div>
+        </div>
+        <div class="kpi k-action">
+          <div class="kpi-label">Awaiting My Action</div>
+          <div class="kpi-value" id="kpi-my-action">4</div>
+          <div class="kpi-meta">Changes with the role selected in sidebar</div>
+        </div>
+        <div class="kpi k-active">
+          <div class="kpi-label">Active Empanelments</div>
+          <div class="kpi-value">42</div>
+          <div class="kpi-meta">Potential value ₹ 6,83,50,000 / month</div>
+        </div>
+        <div class="kpi k-renewal">
+          <div class="kpi-label">Renewal Due · 45 days</div>
+          <div class="kpi-value">5</div>
+          <div class="kpi-meta">Earliest expiry: 02-Aug-2026 (23 days)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><h3>Pipeline by Stage</h3><div class="card-sub">Where the 11 in-progress empanelments currently sit, and for how long</div></div>
+        </div>
+        <div class="card-body" style="padding-top: 8px;">
+          <table class="queue">
+            <thead><tr><th>Stage</th><th>Pending With</th><th style="text-align:right;">Count</th><th style="text-align:right;">Oldest (days in stage)</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge b-s1"><span class="badge-dot"></span>Stage 1 · Management Review</span></td><td>Unit Management</td><td class="num">2</td><td class="num"><span class="aging-ok">3d</span></td></tr>
+              <tr><td><span class="badge b-s2"><span class="badge-dot"></span>Stage 2 · Finance Review</span></td><td>Finance</td><td class="num">3</td><td class="num"><span class="aging-warn">8d</span></td></tr>
+              <tr><td><span class="badge b-s3"><span class="badge-dot"></span>Stage 3 · Group Management Review</span></td><td>Group Management</td><td class="num">1</td><td class="num"><span class="aging-ok">2d</span></td></tr>
+              <tr><td><span class="badge b-s4"><span class="badge-dot"></span>Stage 4 · Agreement Drafting — Legal</span></td><td>Marketing Associate</td><td class="num">1</td><td class="num"><span class="aging-breach">17d</span></td></tr>
+              <tr><td><span class="badge b-s5"><span class="badge-dot"></span>Stage 5 · With Payor — Signature Pending</span></td><td>Marketing Associate</td><td class="num">2</td><td class="num"><span class="aging-breach">24d</span></td></tr>
+              <tr><td><span class="badge b-s6"><span class="badge-dot"></span>Stage 6 · Activation Pending — Billing</span></td><td>Billing (per unit)</td><td class="num">1</td><td class="num"><span class="aging-warn">6d</span></td></tr>
+              <tr><td><span class="badge b-returned"><span class="badge-dot"></span>Returned for Modification</span></td><td>Marketing Associate</td><td class="num">1</td><td class="num"><span class="aging-ok">1d</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><h3>Active Portfolio by Payor Category</h3><div class="card-sub">Categories mirror Admin → Payors Master</div></div>
+        </div>
+        <div class="card-body" style="padding-top: 8px;">
+          <table class="queue">
+            <thead><tr><th>Payor Category</th><th style="text-align:right;">Active</th><th style="text-align:right;">Renewal Due (45d)</th><th style="text-align:right;">Expired</th><th style="text-align:right;">Potential Value / month</th></tr></thead>
+            <tbody>
+              <tr><td>Insurance</td><td class="num">14</td><td class="num">2</td><td class="num">2</td><td class="num">₹ 2,84,00,000</td></tr>
+              <tr><td>TPAs</td><td class="num">11</td><td class="num">1</td><td class="num">1</td><td class="num">₹ 1,92,50,000</td></tr>
+              <tr><td>Direct Corporate</td><td class="num">9</td><td class="num">1</td><td class="num">2</td><td class="num">₹ 1,18,00,000</td></tr>
+              <tr><td>CGHS Corporate</td><td class="num">4</td><td class="num">1</td><td class="num">1</td><td class="num">₹ 52,00,000</td></tr>
+              <tr><td>Non-CGHS Corporate</td><td class="num">3</td><td class="num">0</td><td class="num">1</td><td class="num">₹ 27,00,000</td></tr>
+              <tr><td>Non-CGHS Govt Scheme</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">₹ 10,00,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="spec-box">
+        <h4>📐 Screen Specification</h4>
+        <ul>
+          <li><strong>Awaiting My Action</strong> KPI is role-aware: for an approver role it counts empanelments sitting at their stage; for Marketing Associate it counts Returned for Modification + Stage 4 + Stage 5 items they own; for Billing it counts Stage 6 items for their unit.</li>
+          <li>Days-in-stage colouring is driven by the <strong>Empanelment TAT Configuration</strong> screen (Admin — see its screen in this spec): green while under 80% of the stage TAT, amber from 80% up to the TAT, red once breached. Working days Mon–Fri, same convention as the existing bill TAT engine.</li>
+          <li>Visibility is unit-wise: Marketing Associate and Management see their unit’s empanelments; Billing sees their unit’s Stage-6 queue; Finance and Group Management see all units.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         SCREEN 2 — EMPANELMENT PIPELINE
+    ================================================================= -->
+    <section class="screen" id="screen-pipeline">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Empanelment Pipeline <span class="screen-tag new">NEW</span></div>
+          <div class="screen-sub">All in-progress empanelments, split by whether the logged-in role must act</div>
+        </div>
+        <button class="btn btn-primary" data-role-only="MARKETING MANAGEMENT" onclick="showScreen('initiate')">➕ Initiate Empanelment</button>
+      </div>
+
+      <div class="filter-bar">
+        <label>Category</label>
+        <select><option>All</option><option>Insurance</option><option>TPAs</option><option>CGHS Direct</option><option>CGHS Corporate</option><option>Direct Corporate</option><option>Non-CGHS Corporate</option><option>Non-CGHS Govt Scheme</option><option>Corporate Private Insured</option><option>Samaj</option></select>
+        <label>Unit</label>
+        <select><option>All</option><option>SOBO</option><option>NOBO</option><option>Nagpur-I</option><option>Nagpur-II</option><option>Rajkot</option></select>
+        <label>Stage</label>
+        <select><option>All</option><option>Stage 1 · Management Review</option><option>Stage 2 · Finance Review</option><option>Stage 3 · Group Management Review</option><option>Stage 4 · Agreement Drafting — Legal</option><option>Stage 5 · With Payor</option><option>Stage 6 · Activation Pending</option><option>Returned for Modification</option></select>
+        <div class="filter-spacer"></div>
+        <input type="search" placeholder="Search payor entity / EMP ID…" />
+      </div>
+
+      <div class="view-tabs">
+        <div class="view-tab active">⚡ Action Required <span class="vt-count hot">4</span></div>
+        <div class="view-tab">👁 Watching — No Action Needed <span class="vt-count">7</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-body" style="padding: 0;">
+          <table class="queue">
+            <thead>
+              <tr>
+                <th>EMP ID</th><th>Payor Entity</th><th>Type</th><th>Units</th><th>Current Stage</th><th>Days in Stage</th><th>Pending With</th><th>Target Date</th><th style="text-align:right;">Potential Value / mo</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="emp-link" onclick="showScreen('detail')">EMP-SOBO-2026-0147</span></td>
+                <td class="payor-cell"><div class="pname">Niva Bupa Health Insurance</div><div class="pcat">Insurance</div></td>
+                <td><span class="type-chip type-ip">IP</span><span class="type-chip type-op">OP</span></td>
+                <td class="unit-chips">SOBO</td>
+                <td><span class="badge b-s2"><span class="badge-dot"></span>Stage 2 · Finance Review</span></td>
+                <td><span class="aging-warn">6d</span></td>
+                <td>Finance</td>
+                <td class="mono" style="font-size:12px;">30-Sep-2026</td>
+                <td class="num">₹ 38,00,000</td>
+                <td><button class="btn btn-sm btn-primary" onclick="showScreen('detail')">Open</button></td>
+              </tr>
+              <tr>
+                <td><span class="emp-link" onclick="showScreen('detail')">EMP-SOBO-2026-0151</span></td>
+                <td class="payor-cell"><div class="pname">Tata Consultancy Services</div><div class="pcat">Direct Corporate</div></td>
+                <td><span class="type-chip type-op">OP</span><span class="type-chip type-hcu">HCU</span></td>
+                <td class="unit-chips">SOBO</td>
+                <td><span class="badge b-returned"><span class="badge-dot"></span>Returned for Modification</span></td>
+                <td><span class="aging-ok">1d</span></td>
+                <td>Marketing Associate</td>
+                <td class="mono" style="font-size:12px;">15-Sep-2026</td>
+                <td class="num">₹ 9,50,000</td>
+                <td><button class="btn btn-sm btn-warn">Resubmit</button></td>
+              </tr>
+              <tr>
+                <td><span class="emp-link" onclick="showScreen('detail')">EMP-NGP1-2026-0144</span></td>
+                <td class="payor-cell"><div class="pname">Vidal Health TPA</div><div class="pcat">TPAs</div></td>
+                <td><span class="type-chip type-ip">IP</span></td>
+                <td class="unit-chips">Nagpur-I</td>
+                <td><span class="badge b-s5"><span class="badge-dot"></span>Stage 5 · With Payor</span></td>
+                <td><span class="aging-breach">24d</span></td>
+                <td>Marketing Associate</td>
+                <td class="mono" style="font-size:12px;">31-Aug-2026</td>
+                <td class="num">₹ 16,00,000</td>
+                <td><button class="btn btn-sm btn-primary" onclick="showScreen('detail')">Update</button></td>
+              </tr>
+              <tr>
+                <td><span class="emp-link" onclick="showScreen('detail')">EMP-SOBO-2026-0138</span></td>
+                <td class="payor-cell"><div class="pname">Larsen &amp; Toubro Ltd.</div><div class="pcat">Direct Corporate</div></td>
+                <td><span class="type-chip type-ip">IP</span><span class="type-chip type-hcu">HCU</span></td>
+                <td class="unit-chips">SOBO</td>
+                <td><span class="badge b-s6"><span class="badge-dot"></span>Stage 6 · Activation Pending</span></td>
+                <td><span class="aging-warn">6d</span></td>
+                <td>Billing · SOBO</td>
+                <td class="mono" style="font-size:12px;">15-Jul-2026</td>
+                <td class="num">₹ 11,20,000</td>
+                <td><button class="btn btn-sm btn-success" onclick="showScreen('detail')">Activate</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="spec-box">
+        <h4>📐 Screen Specification</h4>
+        <ul>
+          <li>The two tabs split the same pipeline query: <strong>Action Required</strong> = current stage owner matches logged-in role (and unit, for Management/Billing); <strong>Watching</strong> = everything else in progress. The table columns are identical in both tabs.</li>
+          <li>The right-most button is contextual to the role and stage: <em>Review</em> (approver at own stage), <em>Resubmit</em> (Marketing Associate on Returned items), <em>Update</em> (Marketing Associate at Stage 4/5), <em>Activate</em> (Billing at Stage 6), otherwise <em>Open</em> (read-only).</li>
+          <li>Row click and EMP ID click both open Empanelment Detail.</li>
+          <li>Default sort: Days in Stage, descending — oldest first.</li>
+        </ul>
+      </div>
+    </section>
+    <!-- ================================================================
+         SCREEN 3 — INITIATE EMPANELMENT (form)
+    ================================================================= -->
+    <section class="screen" id="screen-initiate">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Initiate Empanelment <span class="screen-tag new">NEW</span></div>
+          <div class="screen-sub">Available to Marketing Associate and Management · Creates a new empanelment and moves it straight to Stage 1 — Management Review</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+
+          <!-- Section 1: Payor -->
+          <div class="form-section">
+            <div class="form-section-title"><span class="step-num">1</span> Payor Entity</div>
+            <div class="form-grid">
+              <div class="field">
+                <label>Payor Category <span class="req">*</span></label>
+                <select>
+                  <option>Insurance</option><option>TPAs</option><option>CGHS Direct</option><option>CGHS Corporate</option>
+                  <option>Direct Corporate</option><option>Non-CGHS Corporate</option><option>Non-CGHS Govt Scheme</option>
+                  <option>Corporate Private Insured</option><option>Samaj</option>
+                </select>
+                <div class="hint">Same categories as Admin → Payors Master</div>
+              </div>
+              <div class="field span2">
+                <label>Payor Entity <span class="req">*</span></label>
+                <select><option>Niva Bupa Health Insurance</option><option>Star Health &amp; Allied Insurance</option><option>HDFC ERGO General Insurance</option><option>…active payors of selected category…</option></select>
+                <div class="hint">Entity not in the list? It must first be added in Payors Master by Admin (approval: Ms. Shaurya Patil). No free-text entities here.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Scope -->
+          <div class="form-section">
+            <div class="form-section-title"><span class="step-num">2</span> Empanelment Scope</div>
+            <div class="form-grid">
+              <div class="field span2">
+                <label>Type of Empanelment <span class="req">*</span> <span style="font-weight:400; color:#64748b;">(select one or more)</span></label>
+                <div class="check-row">
+                  <label class="check-pill checked"><input type="checkbox" checked /> IP — In-Patient</label>
+                  <label class="check-pill checked"><input type="checkbox" checked /> OP — Out-Patient</label>
+                  <label class="check-pill"><input type="checkbox" /> HCU — Health Check-Up</label>
+                </div>
+              </div>
+              <div class="field">
+                <label>Unit</label>
+                <input type="text" value="SOBO" readonly />
+                <div class="hint">Auto-stamped from the initiator's profile — empanelment and its journey are unit-wise. Same payor for another unit = a separate empanelment initiated by that unit's Marketing Associate.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Potential business value -->
+          <div class="form-section">
+            <div class="form-section-title"><span class="step-num">3</span> Potential Business Value — per month</div>
+            <table class="bv-table">
+              <thead><tr><th>Type</th><th>Patients / month <span class="req">*</span></th><th>Revenue / month (₹) <span class="req">*</span></th></tr></thead>
+              <tbody>
+                <tr><td><span class="type-chip type-ip">IP</span> In-Patient</td><td><input type="text" value="120" /></td><td><input type="text" value="30,00,000" /></td></tr>
+                <tr><td><span class="type-chip type-op">OP</span> Out-Patient</td><td><input type="text" value="450" /></td><td><input type="text" value="8,00,000" /></td></tr>
+              </tbody>
+              <tfoot><tr><td>Total</td><td class="mono">570</td><td class="mono">₹ 38,00,000</td></tr></tfoot>
+            </table>
+            <div class="hint" style="font-size:11px; color:#64748b; margin-top:6px;">Rows appear only for the types selected in Section 2. Totals auto-compute.</div>
+          </div>
+
+          <!-- Section 4: Commercial terms -->
+          <div class="form-section">
+            <div class="form-section-title"><span class="step-num">4</span> Commercial Terms</div>
+            <div class="form-grid">
+              <div class="field">
+                <label>IP — % over GIPSA <span class="req">*</span></label>
+                <input type="text" value="12%" />
+                <div class="hint">Shown because category = Insurance/TPA and IP selected</div>
+              </div>
+              <div class="field">
+                <label>OP — % over Cash <span class="req">*</span></label>
+                <input type="text" value="8%" />
+              </div>
+              <div class="field">
+                <label>HCU — % over Cash</label>
+                <input type="text" placeholder="—" readonly />
+                <div class="hint">Disabled — HCU not selected</div>
+              </div>
+              <div class="field">
+                <label>Target Date for Activation <span class="req">*</span></label>
+                <input type="date" value="2026-09-30" />
+              </div>
+              <div class="field">
+                <label>Tenure of Agreement (months) <span class="req">*</span></label>
+                <input type="text" value="24" />
+              </div>
+              <div class="field span3">
+                <label>Key Commercial Terms <span class="req">*</span></label>
+                <textarea rows="4">IP at 12% over GIPSA package rates. OP consultations & diagnostics at 8% over cash tariff. Cashless for sum insured ≥ ₹3L. Payment terms: 30 days from claim submission. Room rent capping per policy terms.</textarea>
+                <div class="hint">Free text · mandatory · this snapshot travels with the empanelment through every review stage and into reports</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:10px; padding-top:6px; border-top:1px solid #e2e8f0;">
+            <button class="btn btn-secondary">Cancel</button>
+            <button class="btn btn-primary">Submit for Review →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit warning modal (mock) -->
+      <div class="modal-backdrop-label">▼ On clicking Submit — confirmation modal (mandatory pause per BRD) ▼</div>
+      <div class="modal-mock">
+        <div class="mm-head">⚠️ Please review before submitting</div>
+        <div class="mm-body">
+          You are initiating empanelment of <strong>Niva Bupa Health Insurance</strong> (Insurance) for <strong>IP + OP</strong> at <strong>SOBO</strong> with potential value <strong>₹ 38,00,000 / month</strong>.<br /><br />
+          Once submitted, it moves to <strong>Stage 1 — Management Review</strong> and can no longer be edited unless it is returned for modification. Please confirm all commercial terms are correct.
+        </div>
+        <div class="mm-foot">
+          <button class="btn btn-secondary">← Go back &amp; check</button>
+          <button class="btn btn-primary">Confirm &amp; Submit</button>
+        </div>
+      </div>
+
+      <div class="spec-box">
+        <h4>📐 Screen Specification</h4>
+        <ul>
+          <li>Conditional field logic: <strong>% over GIPSA (IP)</strong> appears when category ∈ {Insurance, TPAs} and IP selected; <strong>% over Cash (IP)</strong> appears when category is any Corporate type and IP selected; <strong>% over Cash</strong> fields for OP / HCU appear whenever that type is selected, for all categories.</li>
+          <li>Business-value rows render only for selected types; every visible row's patients + revenue are mandatory.</li>
+          <li>All ₹ inputs accept digits only and format with Indian comma separators on blur.</li>
+          <li><strong>Resubmission mode</strong> (from a Returned item): the same form loads pre-filled, with the return remarks and full prior activity pinned above it (see Detail screen). Resubmit increments <code>cycle_no</code> and re-enters Stage 1.</li>
+          <li>Initiator identity (name per HMIS, employee ID, department, designation, unit) is stamped from the user profile — not re-entered here.</li>
+        </ul>
+      </div>
+
+      <div class="dev-note">
+        <h4>🔧 DEVELOPER NOTE — NOT PART OF UI · SUBMIT ENDPOINT</h4>
+        <ul>
+          <li><code>POST /api/empanelments</code> — validates conditional mandatory fields server-side (do not trust the frontend's show/hide).</li>
+          <li><code>emp_code</code> is <strong>auto-generated server-side on submission</strong> — never user input. Format: <code>EMP-{UNIT}-{YYYY}-{running 4-digit}</code>, e.g. <code>EMP-SOBO-2026-0147</code>; serial runs per unit per calendar year. Unit codes: <code>SOBO, NOBO, NGP1, NGP2, RJKT</code> (Nagpur-I, Nagpur-II, Rajkot). Generate inside the same transaction as the insert to avoid duplicate serials under concurrency (per-unit-year sequence row or <code>SELECT ... FOR UPDATE</code>).</li>
+          <li>On create: <code>status = STAGE_1_MGMT_REVIEW</code>, <code>current_cycle = 1</code>, append an <code>INITIATED</code> row in <code>empanelment_activity</code>.</li>
+          <li>Notify (email via existing M365 SMTP) the Management users of the initiating unit — reuse existing notification service.</li>
+        </ul>
+      </div>
+    </section>
+    <!-- ================================================================
+         SCREEN 4 — EMPANELMENT DETAIL (sample: EMP-SOBO-2026-0147)
+    ================================================================= -->
+    <section class="screen" id="screen-detail">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title"><span class="mono" style="font-size:18px; color:#0284c7;">EMP-SOBO-2026-0147</span> · Niva Bupa Health Insurance <span class="screen-tag new">NEW</span></div>
+          <div class="screen-sub">Insurance · IP + OP · Unit: SOBO · Initiated 18-Jun-2026 by Rohit Deshmukh (Marketing Associate, SOBO) · Cycle 2</div>
+        </div>
+        <span class="badge b-s2" style="font-size:12px; padding:5px 12px;"><span class="badge-dot"></span>Stage 2 · Finance Review — 6 days</span>
+      </div>
+
+      <!-- Stage stepper -->
+      <div class="card">
+        <div class="card-body">
+          <div class="stepper">
+            <div class="step done"><div class="step-dot">✓</div><div class="step-label">Initiated / Resubmitted</div><div class="step-meta">04-Jul</div></div>
+            <div class="step done"><div class="step-dot">✓</div><div class="step-label">1 · Management Review</div><div class="step-meta">04-Jul, 0d</div></div>
+            <div class="step current"><div class="step-dot">2</div><div class="step-label">2 · Finance Review</div><div class="step-meta">6d and counting</div></div>
+            <div class="step"><div class="step-dot">3</div><div class="step-label">3 · Group Mgmt Review</div><div class="step-meta">—</div></div>
+            <div class="step"><div class="step-dot">4</div><div class="step-label">4 · Agreement Drafting — Legal</div><div class="step-meta">—</div></div>
+            <div class="step"><div class="step-dot">5</div><div class="step-label">5 · With Payor — Signature</div><div class="step-meta">—</div></div>
+            <div class="step"><div class="step-dot">6</div><div class="step-label">6 · Activation — Billing</div><div class="step-meta">—</div></div>
+            <div class="step"><div class="step-dot">★</div><div class="step-label">Active</div><div class="step-meta">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-grid" style="margin-top:16px;">
+        <div>
+          <!-- Summary -->
+          <div class="card">
+            <div class="card-head"><h3>Empanelment Summary</h3></div>
+            <div class="card-body">
+              <div class="kv-grid">
+                <div class="kv"><div class="k">Payor Category</div><div class="v">Insurance</div></div>
+                <div class="kv"><div class="k">Payor Entity</div><div class="v">Niva Bupa Health Insurance</div></div>
+                <div class="kv"><div class="k">Type of Empanelment</div><div class="v"><span class="type-chip type-ip">IP</span><span class="type-chip type-op">OP</span></div></div>
+                <div class="kv"><div class="k">Unit</div><div class="v mono">SOBO</div></div>
+                <div class="kv"><div class="k">Target Activation Date</div><div class="v mono">30-Sep-2026</div></div>
+                <div class="kv"><div class="k">Tenure</div><div class="v mono">24 months</div></div>
+                <div class="kv"><div class="k">IP — % over GIPSA</div><div class="v mono">12%</div></div>
+                <div class="kv"><div class="k">OP — % over Cash</div><div class="v mono">8%</div></div>
+                <div class="kv"><div class="k">Potential Value / month</div><div class="v mono">₹ 38,00,000</div></div>
+                <div class="kv"><div class="k">Potential Patients / month</div><div class="v mono">570 (IP 120 · OP 450)</div></div>
+                <div class="kv"><div class="k">Initiated By</div><div class="v">Rohit Deshmukh · EMP-ID 40217 · Marketing, SOBO</div></div>
+                <div class="kv"><div class="k">Current Cycle</div><div class="v mono">2 (returned once)</div></div>
+              </div>
+              <div class="kv" style="margin-top:12px;"><div class="k">Key Commercial Terms (Cycle 2 — current)</div>
+                <div class="terms-box">IP at 12% over GIPSA package rates. OP consultations &amp; diagnostics at 8% over cash tariff. Cashless for sum insured ≥ ₹3L. Payment terms: <strong>30 days</strong> from claim submission. Room rent capping per policy terms.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity log -->
+          <div class="card">
+            <div class="card-head"><h3>Activity Log</h3><div class="card-sub">Append-only · all cycles visible, per BRD</div></div>
+            <div class="card-body">
+              <div class="cycle-divider"><div class="cd-line"></div><div class="cd-label">Cycle 2 — current</div><div class="cd-line"></div></div>
+              <div class="activity">
+                <div class="act-item a-approve">
+                  <div class="act-head">Approved at Stage 1 — Management Review <span class="act-role">Management · SOBO</span></div>
+                  <div class="act-time">04-Jul-2026 17:42 · Dr. Meera Kulkarni</div>
+                  <div class="act-remarks">Revised payment terms acceptable. Proceed.</div>
+                </div>
+                <div class="act-item a-submit">
+                  <div class="act-head">Resubmitted (Cycle 2) <span class="act-role">Marketing Associate</span></div>
+                  <div class="act-time">04-Jul-2026 11:05 · Rohit Deshmukh</div>
+                  <div class="act-remarks">Payment terms renegotiated with payor from 45 to 30 days as directed. Terms updated in Section 4.</div>
+                </div>
+              </div>
+              <div class="cycle-divider"><div class="cd-line"></div><div class="cd-label">Cycle 1</div><div class="cd-line"></div></div>
+              <div class="activity">
+                <div class="act-item a-return">
+                  <div class="act-head">Returned for Modification at Stage 2 — Finance Review <span class="act-role">Finance</span></div>
+                  <div class="act-time">01-Jul-2026 15:20 · Prakash Nair</div>
+                  <div class="act-remarks return-remarks"><strong>Terms to be changed ✓</strong> — Payment terms of 45 days not acceptable for this category; renegotiate to 30 days. Rest of the terms are fine.</div>
+                </div>
+                <div class="act-item a-approve">
+                  <div class="act-head">Approved at Stage 1 — Management Review <span class="act-role">Management · SOBO</span></div>
+                  <div class="act-time">22-Jun-2026 10:15 · Dr. Meera Kulkarni</div>
+                  <div class="act-remarks">Business case is sound for South Mumbai catchment.</div>
+                </div>
+                <div class="act-item a-submit">
+                  <div class="act-head">Initiated <span class="act-role">Marketing Associate</span></div>
+                  <div class="act-time">18-Jun-2026 12:40 · Rohit Deshmukh</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Documents -->
+          <div class="card">
+            <div class="card-head"><h3>Documents</h3><div class="card-sub">Signed agreement is mandatory to move past Stage 5</div></div>
+            <div class="card-body">
+              <div class="upload-zone"><div class="uz-icon">📎</div>No signed agreement uploaded yet — upload becomes available at Stage 5</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Right column: role-conditional action panels ===== -->
+        <div>
+          <!-- FINANCE action panel (current stage owner in this sample) -->
+          <div class="card action-panel" data-role-only="FINANCE">
+            <div class="card-head"><h3>⚡ Your Action — Stage 2 · Finance Review</h3></div>
+            <div class="card-body">
+              <p style="font-size:12.5px; color:#475569; margin-bottom:10px;">Review the commercial terms and potential business value, then decide:</p>
+              <div class="field">
+                <label>Remarks <span class="req">*</span> <span style="font-weight:400;color:#64748b;">(mandatory for Reject / Return)</span></label>
+                <textarea rows="3" placeholder="Enter your review remarks…"></textarea>
+              </div>
+              <div class="decision-row">
+                <button class="btn btn-success">✓ Approve → Stage 3</button>
+                <button class="btn btn-danger">✕ Reject</button>
+              </div>
+              <div class="return-box">
+                <div class="rb-title">↩ Return for Modification</div>
+                <label class="check-pill" style="width:100%;"><input type="checkbox" /> Terms to be changed</label>
+                <div class="field" style="margin-top:8px;">
+                  <label>What has to be changed <span class="req">*</span></label>
+                  <textarea rows="2" placeholder="Mandatory — specify exactly what the Marketing Associate must modify…"></textarea>
+                </div>
+                <button class="btn btn-warn btn-sm" style="margin-top:8px;">↩ Return to Marketing Associate</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- MANAGEMENT / GROUP panels — identical pattern, shown at their stage -->
+          <div class="card action-panel" data-role-only="MANAGEMENT GROUP">
+            <div class="card-head"><h3>👁 No Action — not at your stage</h3></div>
+            <div class="card-body" style="font-size:12.5px; color:#475569;">
+              This empanelment is at <strong>Stage 2 — Finance Review</strong>. Your review panel (identical to the Finance panel: Approve / Reject / Return with mandatory remarks) appears when it reaches your stage. For Group Management this is the single action available in HICT, held only by users with the Empanelment Approver permission. Approve at Stage 1 moves it to Stage 2; at Stage 2 to Stage 3; at Stage 3 to Stage 4.
+            </div>
+          </div>
+
+          <!-- MARKETING panels: stage 4/5 updates -->
+          <div class="card action-panel" data-role-only="MARKETING">
+            <div class="card-head"><h3>Your Upcoming Actions</h3></div>
+            <div class="card-body">
+              <p style="font-size:12.5px; color:#475569;">Currently with Finance — no action needed from you. When it reaches:</p>
+              <div class="spec-box" style="margin:10px 0 0;">
+                <h4>Stage 4 — Agreement Drafting (Legal)</h4>
+                <ul style="font-size:12.5px;">
+                  <li>Button: <strong>"Mark Legal Draft Approved → Stage 5"</strong> + remarks. Legal team works offline; you update the status once the draft is validated.</li>
+                </ul>
+              </div>
+              <div class="spec-box" style="margin:10px 0 0;">
+                <h4>Stage 5 — With Payor</h4>
+                <ul style="font-size:12.5px;">
+                  <li>Upload <strong>Signed Agreement</strong> (PDF, mandatory)</li>
+                  <li>Enter <strong>Agreement Start Date</strong> and <strong>Agreement Expiry Date</strong> (both mandatory)</li>
+                  <li>Button: <strong>"Mark Signed → Stage 6"</strong> — disabled until all three are provided</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- BILLING panel: stage 6 activation -->
+          <div class="card action-panel" data-role-only="BILLING">
+            <div class="card-head"><h3>⚡ Stage 6 — Activation Checklist · SOBO</h3></div>
+            <div class="card-body">
+              <p style="font-size:12.5px; color:#475569; margin-bottom:8px;">Sample of the Billing panel as it appears at Stage 6 (this record is at Stage 2 — panel shown here for design reference). One undertaking from the Billing team of the empanelment’s unit:</p>
+              <label class="check-pill" style="width:100%; margin-bottom:8px;"><input type="checkbox" /> Tariffs / configuration updated in HIS for this payor</label>
+              <label class="check-pill" style="width:100%;"><input type="checkbox" /> Empanelment activated in HIS system</label>
+              <div class="undertaking">
+                <input type="checkbox" />
+                <div><strong>Undertaking:</strong> I confirm that tariff configuration and HIS activation for this payor have been completed for my unit, and I take responsibility for their correctness.</div>
+              </div>
+              <button class="btn btn-success" style="width:100%; opacity:0.6;" disabled>✓ Confirm Activation for SOBO</button>
+              <div class="hint" style="margin-top:8px;">Enabled only when all three checkboxes are ticked. On confirmation the empanelment turns <strong>Active</strong>.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dev-note">
+        <h4>🔧 DEVELOPER NOTE — NOT PART OF UI · STATE MACHINE & GUARDS</h4>
+        <div class="formula">Transitions (server-enforced, @PreAuthorize by role + stage-owner check):
+  STAGE_1 --approve(MANAGEMENT, unit match)--&gt; STAGE_2
+  STAGE_2 --approve(FINANCE)---------------&gt; STAGE_3
+  STAGE_3 --approve(EMPANELMENT_APPROVER)--&gt; STAGE_4
+  STAGE_4 --legal_ok(MARKETING, owner)-----&gt; STAGE_5
+  STAGE_5 --signed(MARKETING, owner,
+           requires: agreement_doc + start_date + expiry_date)--&gt; STAGE_6
+  STAGE_6 --activation confirmed(BILLING, unit match)--&gt; ACTIVE
+  STAGE_1..5 --return(stage owner, remarks mandatory)--&gt; RETURNED_FOR_MODIFICATION
+  STAGE_1..3 --reject(stage owner, remarks mandatory)--&gt; REJECTED (terminal)
+  (Reject is NOT available at Stages 4-6 — confirmed)
+  RETURNED  --resubmit(MARKETING, owner)---&gt; STAGE_1  (cycle_no += 1)</div>
+        <ul>
+          <li>Reject vs Return (✅ confirmed): <strong>Reject is available only at the review stages 1–3</strong> and is terminal; Return for Modification is available at Stages 1–5. Both require mandatory remarks. At Stages 4–5 the only exits are progress or Return.</li>
+          <li>Return remarks + "terms to be changed" flag are stored on the activity row and pinned on the resubmission form.</li>
+          <li>Editing the empanelment is allowed <strong>only</strong> in RETURNED_FOR_MODIFICATION status, only by the initiating Marketing Associate. Snapshot terms per cycle in the activity log so reviewers can diff.</li>
+          <li>Stage 6: <code>PATCH /api/empanelments/{id}/activate</code> — allowed only for BILLING users of the empanelment's unit; writes <code>empanelment_activation</code>, flips status to ACTIVE, stamps <code>activated_at</code>.</li>
+        </ul>
+      </div>
+    </section>
+    <!-- ================================================================
+         SCREEN 5 — ACTIVE EMPANELMENTS
+    ================================================================= -->
+    <section class="screen" id="screen-active">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Active Empanelments <span class="screen-tag new">NEW</span></div>
+          <div class="screen-sub">Visible to all roles · grouped payor-category wise, per BRD</div>
+        </div>
+        <button class="btn btn-secondary btn-sm">⬇ Export Excel</button>
+      </div>
+
+      <div class="cat-tabs">
+        <button class="cat-tab active">All <span class="ct-n">42</span></button>
+        <button class="cat-tab">Insurance <span class="ct-n">14</span></button>
+        <button class="cat-tab">TPAs <span class="ct-n">11</span></button>
+        <button class="cat-tab">CGHS Direct <span class="ct-n">0</span></button>
+        <button class="cat-tab">CGHS Corporate <span class="ct-n">4</span></button>
+        <button class="cat-tab">Direct Corporate <span class="ct-n">9</span></button>
+        <button class="cat-tab">Non-CGHS Corporate <span class="ct-n">3</span></button>
+        <button class="cat-tab">Non-CGHS Govt Scheme <span class="ct-n">1</span></button>
+      </div>
+
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <table class="queue">
+            <thead><tr><th>EMP ID</th><th>Payor Entity</th><th>Category</th><th>Type</th><th>Units</th><th>Start Date</th><th>Expiry Date</th><th>Tenure</th><th>Status</th><th>Agreement</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="emp-link">EMP-NOBO-2025-0089</span></td>
+                <td class="payor-cell"><div class="pname">Star Health &amp; Allied Insurance</div></td>
+                <td>Insurance</td>
+                <td><span class="type-chip type-ip">IP</span><span class="type-chip type-op">OP</span></td>
+                <td class="unit-chips">NOBO</td>
+                <td class="mono" style="font-size:12px;">01-Mar-2025</td>
+                <td class="mono" style="font-size:12px;">28-Feb-2027</td>
+                <td class="mono" style="font-size:12px;">24 mo</td>
+                <td><span class="badge b-active"><span class="badge-dot"></span>Active</span></td>
+                <td><button class="btn btn-sm btn-secondary">📄 View</button></td>
+              </tr>
+              <tr>
+                <td><span class="emp-link">EMP-SOBO-2025-0102</span></td>
+                <td class="payor-cell"><div class="pname">MediAssist Insurance TPA</div></td>
+                <td>TPAs</td>
+                <td><span class="type-chip type-ip">IP</span></td>
+                <td class="unit-chips">SOBO</td>
+                <td class="mono" style="font-size:12px;">15-Jun-2025</td>
+                <td class="mono" style="font-size:12px;">14-Jun-2027</td>
+                <td class="mono" style="font-size:12px;">24 mo</td>
+                <td><span class="badge b-active"><span class="badge-dot"></span>Active</span></td>
+                <td><button class="btn btn-sm btn-secondary">📄 View</button></td>
+              </tr>
+              <tr>
+                <td><span class="emp-link">EMP-SOBO-2024-0231</span></td>
+                <td class="payor-cell"><div class="pname">New India Assurance</div></td>
+                <td>Insurance</td>
+                <td><span class="type-chip type-ip">IP</span><span class="type-chip type-op">OP</span><span class="type-chip type-hcu">HCU</span></td>
+                <td class="unit-chips">SOBO</td>
+                <td class="mono" style="font-size:12px;">13-Aug-2024</td>
+                <td class="mono" style="font-size:12px;">12-Aug-2026</td>
+                <td class="mono" style="font-size:12px;">24 mo</td>
+                <td><span class="badge b-renewal"><span class="badge-dot"></span>Renewal Due · 33d</span></td>
+                <td><button class="btn btn-sm btn-secondary">📄 View</button></td>
+              </tr>
+              <tr>
+                <td><span class="emp-link">EMP-SOBO-2025-0118</span></td>
+                <td class="payor-cell"><div class="pname">Reliance Industries Ltd.</div></td>
+                <td>Direct Corporate</td>
+                <td><span class="type-chip type-op">OP</span><span class="type-chip type-hcu">HCU</span></td>
+                <td class="unit-chips">SOBO</td>
+                <td class="mono" style="font-size:12px;">01-Oct-2025</td>
+                <td class="mono" style="font-size:12px;">30-Sep-2027</td>
+                <td class="mono" style="font-size:12px;">24 mo</td>
+                <td><span class="badge b-active"><span class="badge-dot"></span>Active</span></td>
+                <td><button class="btn btn-sm btn-secondary">📄 View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="spec-box">
+        <h4>📐 Screen Specification</h4>
+        <ul>
+          <li>Records whose expiry is within 45 days show the amber <strong>Renewal Due</strong> badge with a live day count — they remain in this register <em>and</em> appear in the Renewal Due register. The badge is derived at query time, never stored.</li>
+          <li>"View" opens the signed agreement PDF from S3 (pre-signed URL, short expiry).</li>
+          <li>Category tabs mirror Payors Master styling for familiarity.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         SCREEN 6 — RENEWAL DUE
+    ================================================================= -->
+    <section class="screen" id="screen-renewal">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Renewal Due — expiring within 45 days <span class="screen-tag new">NEW</span></div>
+          <div class="screen-sub">Auto-derived: Active empanelments with expiry ≤ 24-Aug-2026 · sorted by soonest expiry</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <table class="queue">
+            <thead><tr><th>EMP ID</th><th>Payor Entity</th><th>Category</th><th>Units</th><th>Expiry Date</th><th>Days to Expiry</th><th>Potential Value / mo</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="emp-link">EMP-SOBO-2024-0198</span></td>
+                <td class="payor-cell"><div class="pname">Bajaj Allianz General Insurance</div></td>
+                <td>Insurance</td>
+                <td class="unit-chips">SOBO</td>
+                <td class="mono" style="font-size:12px;">02-Aug-2026</td>
+                <td><span class="aging-breach">23d</span></td>
+                <td class="num">₹ 22,00,000</td>
+                <td><button class="btn btn-sm btn-primary" data-role-only="MARKETING MANAGEMENT">🔄 Initiate Renewal</button></td>
+              </tr>
+              <tr>
+                <td><span class="emp-link">EMP-SOBO-2024-0231</span></td>
+                <td class="payor-cell"><div class="pname">New India Assurance</div></td>
+                <td>Insurance</td>
+                <td class="unit-chips">SOBO</td>
+                <td class="mono" style="font-size:12px;">12-Aug-2026</td>
+                <td><span class="aging-breach">33d</span></td>
+                <td class="num">₹ 41,00,000</td>
+                <td><button class="btn btn-sm btn-primary" data-role-only="MARKETING MANAGEMENT">🔄 Initiate Renewal</button></td>
+              </tr>
+              <tr>
+                <td><span class="emp-link">EMP-NGP1-2024-0244</span></td>
+                <td class="payor-cell"><div class="pname">Health India TPA</div></td>
+                <td>TPAs</td>
+                <td class="unit-chips">Nagpur-I</td>
+                <td class="mono" style="font-size:12px;">20-Aug-2026</td>
+                <td><span class="aging-warn">41d</span></td>
+                <td class="num">₹ 13,50,000</td>
+                <td><button class="btn btn-sm btn-primary" data-role-only="MARKETING MANAGEMENT">🔄 Initiate Renewal</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="spec-box">
+        <h4>📐 Screen Specification</h4>
+        <ul>
+          <li><strong>Initiate Renewal</strong> (confirmed in scope): opens the Initiate form pre-filled from the expiring empanelment and links the two records (<code>renewal_of_id</code>). The renewal runs the same full Stage 1–6 journey as a fresh empanelment.</li>
+          <li>45-day window: single config constant, not hard-coded across queries.</li>
+          <li>Suggested notification: weekly email digest of this register to Marketing Associates + Management (reuse M365 SMTP service).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         SCREEN 7 — EXPIRED
+    ================================================================= -->
+    <section class="screen" id="screen-expired">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Expired Empanelments <span class="screen-tag new">NEW</span></div>
+          <div class="screen-sub">Visible to all roles · payor-category wise</div>
+        </div>
+        <button class="btn btn-secondary btn-sm">⬇ Export Excel</button>
+      </div>
+      <div class="cat-tabs">
+        <button class="cat-tab active">All <span class="ct-n">7</span></button>
+        <button class="cat-tab">Insurance <span class="ct-n">2</span></button>
+        <button class="cat-tab">TPAs <span class="ct-n">1</span></button>
+        <button class="cat-tab">Direct Corporate <span class="ct-n">2</span></button>
+        <button class="cat-tab">CGHS Corporate <span class="ct-n">1</span></button>
+        <button class="cat-tab">Non-CGHS Corporate <span class="ct-n">1</span></button>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <table class="queue">
+            <thead><tr><th>EMP ID</th><th>Payor Entity</th><th>Category</th><th>Units</th><th>Start</th><th>Expired On</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="emp-link">EMP-SOBO-2023-0156</span></td>
+                <td class="payor-cell"><div class="pname">Godrej &amp; Boyce Mfg. Co.</div></td>
+                <td>Direct Corporate</td>
+                <td class="unit-chips">SOBO</td>
+                <td class="mono" style="font-size:12px;">01-May-2024</td>
+                <td class="mono" style="font-size:12px;">30-Apr-2026</td>
+                <td><span class="badge b-expired"><span class="badge-dot"></span>Expired · 71d</span></td>
+                <td><button class="btn btn-sm btn-primary" data-role-only="MARKETING MANAGEMENT">🔄 Initiate Renewal</button></td>
+              </tr>
+              <tr>
+                <td><span class="emp-link">EMP-RJKT-2023-0171</span></td>
+                <td class="payor-cell"><div class="pname">Ericson Insurance TPA</div></td>
+                <td>TPAs</td>
+                <td class="unit-chips">Rajkot</td>
+                <td class="mono" style="font-size:12px;">15-Jun-2024</td>
+                <td class="mono" style="font-size:12px;">14-Jun-2026</td>
+                <td><span class="badge b-expired"><span class="badge-dot"></span>Expired · 26d</span></td>
+                <td><button class="btn btn-sm btn-primary" data-role-only="MARKETING MANAGEMENT">🔄 Initiate Renewal</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="dev-note">
+        <h4>🔧 DEVELOPER NOTE — NOT PART OF UI · EXPIRY JOB</h4>
+        <ul>
+          <li>Nightly scheduled job (reuse existing Spring <code>@Scheduled</code> infra): <code>UPDATE empanelments SET status='EXPIRED' WHERE status='ACTIVE' AND expiry_date &lt; CURDATE()</code> + activity-log row per flipped record.</li>
+          <li>Open business question for Vikram: should billing against an expired empanelment be blocked/warned in the main HICT bill workflow? Out of scope for v1 unless confirmed.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         SCREEN 8b — EMPANELMENT TAT CONFIGURATION (ADMIN)
+    ================================================================= -->
+    <section class="screen" id="screen-tat">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Empanelment TAT Configuration <span class="screen-tag reuse">ADMIN · MIRRORS EXISTING TAT SCREEN</span></div>
+          <div class="screen-sub">Set expected working days (Mon–Fri) for each empanelment stage × payor category combination · Admin role only</div>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-secondary">⬇ Download Excel</button>
+          <button class="btn btn-primary">✓ Save All</button>
+        </div>
+      </div>
+
+      <div class="tat-info">
+        <h4>ℹ️ How Empanelment TAT works</h4>
+        Enter the maximum number of <strong>working days</strong> (Monday–Friday, excluding Saturday and Sunday) an empanelment should remain in each stage per payor category. If an empanelment exceeds this threshold, a <strong style="color:#b91c1c;">TAT Breached</strong> badge appears across the module — pipeline, detail, dashboard and reports. From 80% of the TAT it shows amber.
+        <div class="ti-note">Leave a cell blank to disable TAT tracking for that combination.</div>
+        <div class="ti-note">ℹ️ RETURNED FOR MODIFICATION: this stage uses a single TAT value across all payor categories — it measures how quickly the Marketing Associate resubmits.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-body" style="padding:0; overflow-x:auto;">
+          <table class="tat" style="min-width:1180px;">
+            <thead>
+              <tr>
+                <th class="tat-corner">PAYOR CATEGORY<span class="th-sub">↓ &nbsp; Empanelment Stage →</span></th>
+                <th>Stage 1<br/>Mgmt Review<span class="th-sub">working days</span></th>
+                <th>Stage 2<br/>Finance Review<span class="th-sub">working days</span></th>
+                <th>Stage 3<br/>Group Review<span class="th-sub">working days</span></th>
+                <th>Stage 4<br/>Legal Drafting<span class="th-sub">working days</span></th>
+                <th>Stage 5<br/>With Payor<span class="th-sub">working days</span></th>
+                <th>Stage 6<br/>Activation<span class="th-sub">working days</span></th>
+                <th>Returned for<br/>Modification ⚡ <span style="color:#fbbf24;">Global</span><span class="th-sub">working days</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tat-cat">Insurance</td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="10" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="20" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell" rowspan="6" style="vertical-align:middle; background:#fffbeb;"><input value="5" class="tc-warn" /><span class="tc-days">days · all categories</span></td>
+              </tr>
+              <tr>
+                <td class="tat-cat">TPAs</td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="10" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="20" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+              </tr>
+              <tr>
+                <td class="tat-cat">CGHS Direct</td>
+                <td class="tat-cell"><input value="7" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="7" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="7" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="14" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="30" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="7" /><span class="tc-days">days</span></td>
+              </tr>
+              <tr>
+                <td class="tat-cat">CGHS Corporate</td>
+                <td class="tat-cell"><input value="7" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="7" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="7" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="14" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="30" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="7" /><span class="tc-days">days</span></td>
+              </tr>
+              <tr>
+                <td class="tat-cat">Direct Corporate</td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="10" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="15" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+              </tr>
+              <tr>
+                <td class="tat-cat">Non-CGHS Corporate</td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="10" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="15" class="tc-warn" /><span class="tc-days">days</span></td>
+                <td class="tat-cell"><input value="5" /><span class="tc-days">days</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="spec-box">
+        <h4>📐 Screen Specification</h4>
+        <ul>
+          <li>Visible to <strong>Admin role only</strong> — shown in this spec for design reference; it sits in the existing Admin portal navigation next to the current (bill) TAT Configuration screen, and reuses its exact interaction pattern: editable cells, blank = disabled, Save All, Download Excel.</li>
+          <li>Rows = payor categories from Payors Master (all 9; six shown here). Columns = the six empanelment stages, plus <strong>Returned for Modification</strong> as a single global value across categories — same convention as PENDING_BILLING in the bill TAT screen.</li>
+          <li>Sample values are indicative defaults only — Vikram to provide final numbers before UAT.</li>
+          <li>Badge logic everywhere in the module: green &lt; 80% of TAT · amber ≥ 80% · red = breached. Weekend exclusion identical to the existing TAT engine.</li>
+        </ul>
+      </div>
+
+      <div class="dev-note">
+        <h4>🔧 DEVELOPER NOTE — NOT PART OF UI · TAT IMPLEMENTATION</h4>
+        <ul>
+          <li>New table <code>empanelment_tat_config (payor_category, stage, working_days NULL)</code> + one global row for RETURNED_FOR_MODIFICATION — mirror the existing bill TAT config structure and its working-day calculator (reuse the same weekend-exclusion utility; do not re-implement).</li>
+          <li>Days-in-stage counts from the activity-log timestamp of entry into the current stage, in working days.</li>
+          <li>Endpoints: <code>GET/PUT /api/admin/empanelment-tat</code> — Admin role only.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         SCREEN 8 — REPORTS
+    ================================================================= -->
+    <section class="screen" id="screen-reports">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Empanelment Reports <span class="screen-tag new">NEW</span></div>
+          <div class="screen-sub">Flat register with every reporting field from the BRD · filter + export</div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary btn-sm">⬇ Export Excel</button>
+          <button class="btn btn-secondary btn-sm">⬇ Export PDF</button>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <label>Status</label>
+        <select><option>All</option><option>In Pipeline (Stages 1–6)</option><option>Returned for Modification</option><option>Active</option><option>Renewal Due</option><option>Expired</option><option>Rejected</option></select>
+        <label>Category</label>
+        <select><option>All</option><option>Insurance</option><option>TPAs</option><option>Direct Corporate</option><option>…</option></select>
+        <label>Unit</label>
+        <select><option>All</option><option>SOBO</option><option>NOBO</option><option>Nagpur-I</option><option>Nagpur-II</option><option>Rajkot</option></select>
+        <label>Period</label>
+        <select><option>FY 2026-27</option><option>Last 90 days</option><option>Custom…</option></select>
+      </div>
+
+      <div class="card">
+        <div class="card-body" style="padding:0; overflow-x:auto;">
+          <table class="queue" style="min-width: 1250px;">
+            <thead><tr>
+              <th>EMP ID</th><th>Payor Entity</th><th>Contract Status</th><th>Pending With</th><th>Stage</th><th>Days in Stage</th><th>Target Date</th><th>Contract Start</th><th>Contract Expiry</th><th style="text-align:right;">Potential Value / mo</th><th>Key Commercial Terms (snapshot)</th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td class="mono" style="font-size:12px;">EMP-SOBO-2026-0147</td>
+                <td class="payor-cell"><div class="pname">Niva Bupa Health Insurance</div><div class="pcat">Insurance</div></td>
+                <td><span class="badge b-s2"><span class="badge-dot"></span>In Pipeline</span></td>
+                <td>Finance</td>
+                <td>Stage 2 · Finance Review</td>
+                <td><span class="aging-warn">6d</span></td>
+                <td class="mono" style="font-size:12px;">30-Sep-2026</td>
+                <td class="mono" style="font-size:12px;">—</td>
+                <td class="mono" style="font-size:12px;">—</td>
+                <td class="num">₹ 38,00,000</td>
+                <td style="max-width:280px; font-size:12px; color:#475569;">IP 12% over GIPSA · OP 8% over cash · 30-day payment terms…</td>
+              </tr>
+              <tr>
+                <td class="mono" style="font-size:12px;">EMP-NOBO-2025-0089</td>
+                <td class="payor-cell"><div class="pname">Star Health &amp; Allied Insurance</div><div class="pcat">Insurance</div></td>
+                <td><span class="badge b-active"><span class="badge-dot"></span>Active</span></td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td class="mono" style="font-size:12px;">28-Feb-2025</td>
+                <td class="mono" style="font-size:12px;">01-Mar-2025</td>
+                <td class="mono" style="font-size:12px;">28-Feb-2027</td>
+                <td class="num">₹ 47,00,000</td>
+                <td style="max-width:280px; font-size:12px; color:#475569;">IP 10% over GIPSA · OP/HCU 7.5% over cash…</td>
+              </tr>
+              <tr>
+                <td class="mono" style="font-size:12px;">EMP-SOBO-2024-0231</td>
+                <td class="payor-cell"><div class="pname">New India Assurance</div><div class="pcat">Insurance</div></td>
+                <td><span class="badge b-renewal"><span class="badge-dot"></span>Renewal Due</span></td>
+                <td>Marketing Associate</td>
+                <td>—</td>
+                <td>—</td>
+                <td class="mono" style="font-size:12px;">10-Aug-2024</td>
+                <td class="mono" style="font-size:12px;">13-Aug-2024</td>
+                <td class="mono" style="font-size:12px;">12-Aug-2026</td>
+                <td class="num">₹ 41,00,000</td>
+                <td style="max-width:280px; font-size:12px; color:#475569;">IP 11% over GIPSA · OP 8% · HCU 6% over cash…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="spec-box">
+        <h4>📐 Screen Specification</h4>
+        <ul>
+          <li>Columns map 1:1 to the BRD reporting requirements: contract start date, target date, potential business value, key commercial terms snapshot, contract status, pending-with role + stage, and Active / Renewal Due / Expired status.</li>
+          <li>Terms snapshot column shows the first ~120 characters with the full text on hover / in export.</li>
+          <li>Excel export reuses the existing export service; include all columns unabridged plus type flags, units, tenure, initiator, and cycle count.</li>
+        </ul>
+      </div>
+    </section>
+
+    </div><!-- /.page -->
+  </main>
+</div>
+
+<script>
+  // ===== Screen navigation (same pattern as existing HICT mockups) =====
+  document.querySelectorAll('.nav-item[data-screen]').forEach(item => {
+    item.addEventListener('click', () => showScreen(item.dataset.screen));
+  });
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const scr = document.getElementById('screen-' + name);
+    if (scr) scr.classList.add('active');
+    const nav = document.querySelector('.nav-item[data-screen="' + name + '"]');
+    if (nav) nav.classList.add('active');
+    window.scrollTo({ top: 0 });
+  }
+
+  // ===== Role switcher (mockup device — production reads role from JWT) =====
+  const ROLE_META = {
+    MARKETING:  { name: 'Rohit Deshmukh',  role: 'Marketing Associate · SOBO', avatar: 'RD', grad: 'linear-gradient(135deg,#7c3aed,#0ea5e9)', myAction: 4 },
+    MANAGEMENT: { name: 'Dr. Meera Kulkarni', role: 'Management · SOBO', avatar: 'MK', grad: 'linear-gradient(135deg,#059669,#0ea5e9)', myAction: 2 },
+    FINANCE:    { name: 'Prakash Nair', role: 'Finance · Corporate', avatar: 'PN', grad: 'linear-gradient(135deg,#d97706,#dc2626)', myAction: 3 },
+    GROUP:      { name: 'Mrs. Asha Patel', role: 'Group Management · Empanelment Approver', avatar: 'AP', grad: 'linear-gradient(135deg,#dc2626,#7c2d12)', myAction: 1 },
+    BILLING:    { name: 'Sneha Joshi', role: 'Billing · SOBO', avatar: 'SJ', grad: 'linear-gradient(135deg,#0284c7,#334155)', myAction: 1 }
+  };
+  function setRole(role) {
+    const m = ROLE_META[role];
+    document.getElementById('rb-name').textContent = m.name;
+    document.getElementById('rb-unit').textContent = m.role;
+    document.getElementById('tb-name').textContent = m.name;
+    document.getElementById('tb-role').textContent = m.role;
+    const av = document.getElementById('tb-avatar');
+    av.textContent = m.avatar; av.style.background = m.grad;
+    document.getElementById('kpi-my-action').textContent = m.myAction;
+    document.querySelectorAll('[data-role-only]').forEach(el => {
+      const allowed = el.getAttribute('data-role-only').split(' ');
+      el.style.display = allowed.includes(role) ? '' : 'none';
+    });
+  }
+  setRole('MARKETING');
+</script>
+</body>
+</html>
